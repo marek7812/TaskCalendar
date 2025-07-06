@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: taskcalendar-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///./data/taskcalendar.db
+    restart: unless-stopped
+    networks:
+      - taskcalendar-network
+
+  frontend:
+    build: ./frontend
+    container_name: taskcalendar-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - taskcalendar-network
+
+networks:
+  taskcalendar-network:
+    driver: bridge
+
+volumes:
+  backend_data:
+    driver: local
